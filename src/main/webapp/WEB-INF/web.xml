@@ -12,5 +12,14 @@
         <servlet-name>liberiasearch</servlet-name>
         <url-pattern>/search</url-pattern>
     </servlet-mapping>
+    <servlet>
+        <servlet-name>rssparser</servlet-name>
+        <servlet-class>com.thepepperbird.appengine.EngineParseFeed</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>rssparser</servlet-name>
+        <url-pattern>/rssparser</url-pattern>
+    </servlet-mapping>
 </web-app>
 
