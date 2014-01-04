@@ -54,10 +54,12 @@ public static final Logger log = Logger.getLogger(JSoupHandler.class.getName());
  
     /*
      * Formats the RSS string to my liking.. 
-     * 
+     * This code is buggy.. causes crashes
      */ 
     public String formatRSS(String _rss)
     {
+      String tmpString = _rss;
+    /*
       String tmpString = _rss.replace("https://www.google.com/url?q=",""); // Remove Google Header
       String word = "&ct";
 
@@ -66,6 +68,8 @@ public static final Logger log = Logger.getLogger(JSoupHandler.class.getName());
         StringBuilder buf = new StringBuilder(tmpString);
         buf.setLength(i);
         tmpString = buf.toString(); }
+        */
+       
          log.info("rss" + tmpString);
       return tmpString;
     }

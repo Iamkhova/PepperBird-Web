@@ -178,25 +178,42 @@ public class SocialHandler
         String rssLink = new String(objects.getString("link"));
         String rssContent = new String(objects.getString("content"));
         
-        log.info("Title:" + rssTitle);
-        log.info("Link:" + rssLink);
-        log.info("Description" + rssContent);
-        
-        // Add to Datastore
-        log.info ("Starting Datastore RSS2DB");
-        urlKey = rssLink;
-        Entity db = new Entity("blogContent", urlKey);
-        db.setProperty("title", rssTitle);
-        db.setProperty("link", rssLink);
-        db.setProperty("description", rssContent);
-        db.setProperty("synced2blog", "0");
-        
+        //Check if link already exist
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        datastore.put(db);
-        log.info("Ending Datastore RSS2DB");
- 
+        Filter rssCheck = new FilterPredicate("link",FilterOperator.EQUAL,rssLink);   
+     
+        // Use class Query to assemble a query
+        Query q = new Query("blogContent").setFilter(rssCheck);
+    
+        // Use PreparedQuery interface to retrieve results
+        PreparedQuery pq = datastore.prepare(q);
+        
+        int queryFound = pq.countEntities();
+        if (queryFound == 0)
+        {
+            log.info("Virgin Query Found!..processing");
+            
+            log.info("Title:" + rssTitle);
+            log.info("Link:" + rssLink);
+            log.info("Description" + rssContent);
+        
+            // Add to Datastore
+            log.info ("Starting Datastore RSS2DB");
+            urlKey = rssLink;
+            Entity db = new Entity("blogContent", urlKey);
+            db.setProperty("title", rssTitle);
+            db.setProperty("link", rssLink);
+            db.setProperty("description", rssContent);
+            db.setProperty("synced2blog", "0");
+        
+            //DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+            datastore.put(db);
+            log.info("Ending Datastore RSS2DB");
+            
+        }//end if
+
      }// end For Loop        
-
+     
    }
 
     private String getCharacterDataFromElement(Element e) { 
