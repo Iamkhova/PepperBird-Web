@@ -129,7 +129,8 @@ public class SocialHandler
      for (Entity result : pq.asIterable()) {
        String rssTitle = (String) result.getProperty("title");
        String rssLink = (String) result.getProperty("link");
-       String rssContent = (String) result.getProperty("description");
+       String rssContent = "";
+      // String rssContent = (String) result.getProperty("description");
        String syncState = (String) result.getProperty("synced2blog");
      
        log.info("Title:" + rssTitle);
@@ -143,6 +144,10 @@ public class SocialHandler
        //Update synced2blog flag
        Entity db = new Entity("blogContent", rssLink);
        db.setProperty("synced2blog", "1");
+       db.setProperty("title", rssTitle);
+       db.setProperty("link", rssLink);
+       db.setProperty("description", "");
+
        datastore.put(db);
        
        log.info("Synced Flag Changed to SYNC");
@@ -203,7 +208,7 @@ public class SocialHandler
             Entity db = new Entity("blogContent", urlKey);
             db.setProperty("title", rssTitle);
             db.setProperty("link", rssLink);
-            db.setProperty("description", rssContent);
+            db.setProperty("description", "");
             db.setProperty("synced2blog", "0");
         
             //DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
