@@ -82,7 +82,7 @@
                         <p class="nospace"><strong>&copy; 2013 ThePepperBird.com - Liberian Focus Search Engine build 101</strong></p>
                         <p class="nospace">Bringing Liberian focus websites all across the web to your fingertips. 
                                 We are bridging the gap between Liberians at home and abroad</p>
-                        <p>Visit our <a href="https://plus.google.com/u/0/b/101270923716502099182/">Google+</a>, 
+                        <p>Visit our <a href="https://plus.google.com/+Thepepperbird">Google+</a>, 
                                 <a href="http://www.facebook.com/ThePepperBird">Facebook</a>, and
                                 <a href="http://twitter.com/ThePepperBird">Twitter</a> sites.</p> 
                         
