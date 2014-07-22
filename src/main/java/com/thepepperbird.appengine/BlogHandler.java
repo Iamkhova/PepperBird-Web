@@ -23,7 +23,10 @@ import com.google.api.services.blogger.Blogger.Blogs.GetByUrl;
 import com.google.api.services.blogger.model.Post;
 import com.google.api.services.blogger.Blogger.Posts.Insert;
 import com.google.api.services.blogger.BloggerRequestInitializer;
+import com.google.api.services.blogger.model.PostList;
 import java.util.Collections;
+
+
 
 
 
@@ -61,6 +64,20 @@ public class BlogHandler
         }
 
     public BlogHandler() {}
+    
+   public PostList getBlogPost(String _keyLabel, String _url) throws IOException {
+     
+     log.info ("Starting getBlogListing ");
+     
+     Blogger blogger = newBlogger();
+     Blog blog = blogger.blogs().getByUrl(_url).execute();
+     
+     long theValue = 20; // max results to show
+     PostList post = blogger.posts().list(blog.getId().toString()).setMaxResults(theValue).execute();
+     
+     return post;
+
+   }
 
    public void executeGetBlogByUrl (String url) throws IOException {
  
@@ -86,8 +103,8 @@ public class BlogHandler
       Blogger blogger = newBlogger();
       log.info ("Starting up postBlogByID");
        
-      //Clean RSS String
-      _blogRSS = parser.formatRSS(_blogRSS);
+      //Clean RSS String <--this has problems
+      // _blogRSS = parser.formatRSS(_blogRSS);
              
       //Get full content
       expandedContent = parser.getContent(_blogRSS);
@@ -103,7 +120,10 @@ public class BlogHandler
      
       // Restrict the result content to just the data we need.
       postsInsertAction.setFields("author/displayName,content,published,title,url");
-      postsInsertAction.setIsDraft(true);
+      
+      // Disable/Enable Draft Mode
+      //TODO This needs to be built as a option and not hardcoded 
+      postsInsertAction.setIsDraft(false);
 
      // This step sends the request to the server.
      Post post = postsInsertAction.setBlogId(_blogID).execute();

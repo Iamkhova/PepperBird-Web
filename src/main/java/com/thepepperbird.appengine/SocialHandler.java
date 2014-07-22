@@ -30,6 +30,13 @@ import java.util.List;
 import com.google.gson.Gson;
 import java.security.GeneralSecurityException;
 
+import com.google.api.services.blogger.model.Post;
+import com.google.api.services.blogger.model.PostList;
+
+import twitter4j.TwitterException;
+
+
+
 
 
 
@@ -59,6 +66,16 @@ public class SocialHandler
    {
      db2Blogger(_blogID);
    }
+   
+   public void syncSocialDB(String _label, String _url)throws IOException,GeneralSecurityException
+   {
+     blog2DB(_label, _url);
+   }
+   
+    public void post2Twitter()throws IOException, TwitterException
+    {
+      blog2Twitter();
+    }
    
  
    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -105,6 +122,100 @@ public class SocialHandler
       appID ="";
       pageID ="";
       blogID ="";
+   }
+   
+   
+   private void blog2DB(String _label, String _url) throws IOException,GeneralSecurityException
+   {
+     int theCount;
+     log.info("Starting blog2DB");
+     BlogHandler blog = new BlogHandler();
+     PostList post = blog.getBlogPost(_label, _url);
+     String labelValue, blogTitle, blogURL, blogLabels; 
+     //Text blogContent;
+     
+     boolean triggerPost; // triggers match aginst key word
+     
+      DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+ 
+    // log.info("the count " + post.getItems());
+     for (Post p : post.getItems()) {
+     log.info("starting loop");
+    // log.info("is empty?" + post.getItems());
+       // labelValue = p.getLabels().toString();
+       labelValue ="";
+        triggerPost = labelValue.contains(_label);
+        
+        if (triggerPost){
+         log.info("startting if");
+          blogURL = p.getUrl().toString();
+          blogTitle = p.getTitle().toString();
+          Text blogContent = new Text(p.getContent());
+          blogLabels ="";
+        //  blogLabels = p.getLabels().toString();
+         log.info("finish var store");
+          //Update new social content
+          Entity db = new Entity("socialContent", blogURL);
+          db.setProperty("syncedFacebook", "0");
+          db.setProperty("syncedTwitter", "0");
+          db.setProperty("syncedGoogle", "0");
+          db.setProperty("title", blogTitle);
+          db.setProperty("link", blogURL);
+          db.setProperty("description", blogContent);
+          db.setProperty("labels", blogLabels);
+          
+          datastore.put(db);
+ 
+          log.info("Social Feed Updated/Added");
+        }//end IF
+     }//end for loop
+     log.info("finished blog2db");
+   }
+   
+   private void blog2Twitter()throws IOException, TwitterException
+   {
+     TwitterHandler twitter = new TwitterHandler();
+     
+      DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+     Filter unSyncFilter = new FilterPredicate("syncedTwitter", FilterOperator.EQUAL, "0");
+     
+      // Use class Query to assemble a query
+     Query q = new Query("socialContent").setFilter(unSyncFilter);
+      PreparedQuery pq = datastore.prepare(q);
+
+     log.info("Query Starting");
+
+
+     for (Entity result : pq.asIterable()) {
+       String syncFacebook = (String) result.getProperty("syncedFacebook");
+       String syncTwitter = (String) result.getProperty("syncedTwitter");
+       String syncGoogle = (String) result.getProperty("syncedGoogle");
+       String blogTitle = (String) result.getProperty("title");
+       String blogLink = (String) result.getProperty("link");
+       String blogDescription = (String) result.getProperty("description");
+       String blogLabels = (String) result.getProperty("labels");
+   
+        
+       // Post to Twitter
+       twitter.post2Twitter(blogTitle,blogLink,"#liberia #tpbird");
+       
+       //Update synced2blog flag
+       Entity db = new Entity("socialContent", blogLink);
+       db.setProperty("syncedTwitter", "1");
+       db.setProperty("syncedFacebook", syncFacebook);
+       db.setProperty("syncedGoogle", syncGoogle);
+       db.setProperty("title", blogTitle);
+       db.setProperty("link", blogLink);
+       db.setProperty("description", blogDescription);
+       db.setProperty("labels", blogLabels);
+
+       datastore.put(db);
+       
+       log.info("Twitter Flag Changed to SYNC");
+
+
+     }// for Loop
+     
    }
    
    /*

@@ -51,7 +51,10 @@ secure.storeFacebookCreds("626916964013041","445226592199436","5205ac162d860a9ca
 secure.storeTwitterCreds("PzN7jkeEkyCY5QxQhM4A","etAYx4IlhlkKkEy6cJ2XP0P0TXzIqt1lLVpKewQ","1071710311-h2xF6A0U5mA9qG7o8Xrq9UelAkRYPciOF83Pg2A","0l2vsfLkxlafugpq4cQZuTEu5wzYtsASd9A5AnIwf0GVs");
 secure.storeBlogID(secure.LIBERIA_NEWS_BLOG, "7676001971884966148");
          try {
-              bhh.getBlogListing();
+              social.syncSocialDB("topnews","http://liberianews.thepepperbird.com/");
+              log.info("starting posting to twitter");
+              social.post2Twitter();
+              log.info("end posting to twitter");
             } catch (Exception e) {
                 log.info("failed" + e);
               } finally {

@@ -11,35 +11,42 @@ import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.Key;
-
+import twitter4j.conf.ConfigurationBuilder;
+import java.io.IOException;
 
 public class TwitterHandler
 {
    public static final Logger log = Logger.getLogger(TwitterHandler.class.getName());
    
+   
+   
    /*
     * One time function to store API credentials into database
     */
-   public void store2DB()
+   public void post2Twitter(String _content, String _url, String _hash)throws IOException, TwitterException
    {
-     String key="twitter"; // set unique key
-     
-     // These items should be cleared prior to syncing codebase //
-     String consumerKey = "PzN7jkeEkyCY5QxQhM4A";
-     String consumerSecret = "etAYx4IlhlkKkEy6cJ2XP0P0TXzIqt1lLVpKewQ";
-     String accessToken = "1071710311-h2xF6A0U5mA9qG7o8Xrq9UelAkRYPciOF83Pg2A";
-     String accessTokenSecret = "0l2vsfLkxlafugpq4cQZuTEu5wzYtsASd9A5AnIwf0GVs";
-     
-     log.info ("Starting Datastore");    
-     Entity db = new Entity("TwitterCreds", key);
-     db.setProperty("consumerKey", consumerKey);
-     db.setProperty("consumerSecret", consumerSecret);
-     db.setProperty("accessToken", accessToken); 
-     db.setProperty("accessTokenSecret", accessTokenSecret);
-            
-     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-     datastore.put(db);
-     log.info("Ending Datastore");
-     
+   
+         CredentialHandler secure = new CredentialHandler();
+         secure.getCredsFromDS(secure.TWITTER_CREDS);
+        //TODO Need to move these creds to database and outside of code.
+         String consumerKey = secure.creds.consumerKey;
+         String consumerSecret = secure.creds.consumerSecret;
+         String accessToken = secure.creds.accessToken;
+         String accessTokenSecret = secure.creds.accessTokenSecret;
+         
+        
+         ConfigurationBuilder cb = new ConfigurationBuilder();
+         cb.setDebugEnabled(true)
+         .setOAuthConsumerKey(consumerKey)
+         .setOAuthConsumerSecret(consumerSecret)
+         .setOAuthAccessToken(accessToken)
+         .setOAuthAccessTokenSecret(accessTokenSecret);
+          TwitterFactory tf = new TwitterFactory(cb.build());
+          Twitter twitter = tf.getInstance();
+          
+          StatusUpdate statusUpdate = new StatusUpdate(_content + " " + _url + " " + _hash);
+          Status status = twitter.updateStatus(statusUpdate);
+
+
    }
 }
