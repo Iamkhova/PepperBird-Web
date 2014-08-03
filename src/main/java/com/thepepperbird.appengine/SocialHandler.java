@@ -188,16 +188,31 @@ public class SocialHandler
 
      for (Entity result : pq.asIterable()) {
        String syncFacebook = (String) result.getProperty("syncedFacebook");
+       log.info("Facebook Sync Handled.");
+       
        String syncTwitter = (String) result.getProperty("syncedTwitter");
+       log.info("twitter Sync Handled.");
+       
        String syncGoogle = (String) result.getProperty("syncedGoogle");
+       log.info("google Sync Handled.");
+       
        String blogTitle = (String) result.getProperty("title");
+       log.info("title Sync Handled.");
+       
        String blogLink = (String) result.getProperty("link");
-       String blogDescription = (String) result.getProperty("description");
+       log.info("link Sync Handled.");
+       
+      // String blogDescription = (Text) result.getProperty("description");
+      String blogDescription = "";
+       log.info("description Sync Handled.");
+       
        String blogLabels = (String) result.getProperty("labels");
+       log.info("label Sync Handled.");
    
         
        // Post to Twitter
-       twitter.post2Twitter(blogTitle,blogLink,"#liberia #tpbird");
+       twitter.post2Twitter(blogTitle,blogLink,"#LIBERIA #tpbird");
+       log.info("post2twitter eneaged.");
        
        //Update synced2blog flag
        Entity db = new Entity("socialContent", blogLink);
