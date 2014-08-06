@@ -79,7 +79,7 @@
             <gcse:searchresults></gcse:searchresults>         
               </div><!-- search_result -->
                 <div id="footer">
-                        <p class="nospace"><strong>&copy; 2013 ThePepperBird.com - Liberian Focus Search Engine build 101</strong></p>
+                        <p class="nospace"><strong>&copy; 2013 ThePepperBird.com - Liberian Focus Search Engine build 103</strong></p>
                         <p class="nospace">Bringing Liberian focus websites all across the web to your fingertips. 
                                 We are bridging the gap between Liberians at home and abroad</p>
                         <p>Visit our <a href="https://plus.google.com/+Thepepperbird">Google+</a>, 
