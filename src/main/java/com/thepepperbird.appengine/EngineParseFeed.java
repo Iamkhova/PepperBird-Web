@@ -45,13 +45,7 @@ public class EngineParseFeed extends HttpServlet
       
       if ("postTwitter".equals(value))
       {
-      //TODO This stuff needs to be moved to the Credential Handler
-//secure.storeBloggerCreds("31015425508-c3jcb835d4ufg9r8bl0a32ckdtr5uhou.apps.googleusercontent.com","pCdromr2AtLHBaOBuksp58ck","1/-vXNWSweiLej7iO6W4fTaEFTJALY28D1Ru3cAaLWxvw");
-//secure.storeFacebookCreds("626916964013041","445226592199436","5205ac162d860a9ca6cec1b2690ce77d","CAAI6LXrxkZCEBAMZACq2IfqUeskmcAZBXxQ0TQmfns0T0JGANlTkJ46wZBdXcxzuCOTWnpfeh68mb5j5Pb5p3oG1KZALmO211mfiNUCU9AZBeG3RmFPhAC9xC2dFhmxsn8iyHyuL2nVpJeWQJ8WBxuyxoLEPF6cEpkT9OyjBusogC51iZCLt6T0IU5RXQjxAsEZD");
-//secure.storeTwitterCreds("PzN7jkeEkyCY5QxQhM4A","etAYx4IlhlkKkEy6cJ2XP0P0TXzIqt1lLVpKewQ","1071710311-h2xF6A0U5mA9qG7o8Xrq9UelAkRYPciOF83Pg2A","0l2vsfLkxlafugpq4cQZuTEu5wzYtsASd9A5AnIwf0GVs");
-//secure.storeBlogID(secure.LIBERIA_NEWS_BLOG, "7676001971884966148");
          try {
-//              social.syncSocialDB("topnews","http://liberianews.thepepperbird.com/"); // Removed tagged twitter syncing
               social.syncSocialDB("","http://liberianews.thepepperbird.com/");
               log.info("starting posting to twitter");
               social.post2Twitter();
@@ -69,8 +63,7 @@ public class EngineParseFeed extends HttpServlet
           //Only pulling true news feeds
           social.rssParse2DB("http://ajax.googleapis.com/ajax/services/feed/load?v=1.0&num=10&q=http://www.google.com/alerts/feeds/14472321683254243665/10900860890542401257");
           social.rssParse2DB("http://ajax.googleapis.com/ajax/services/feed/load?v=1.0&num=10&q=http://allafrica.com/tools/headlines/rdf/liberia/headlines.rdf");
-          social.rssParse2DB("http://ajax.googleapis.com/ajax/services/feed/load?v=1.0&num=10&q=http://www.google.com/alerts/feeds/14472321683254243665/4209907976913027929");
-          //social.rssParse2DB("http://ajax.googleapis.com/ajax/services/feed/load?v=1.0&num=10&q=http://www.google.com/alerts/feeds/14472321683254243665/11564968275061407926");   
+          social.rssParse2DB("http://ajax.googleapis.com/ajax/services/feed/load?v=1.0&num=10&q=http://www.google.com/alerts/feeds/14472321683254243665/4209907976913027929"); 
           
       }//end if
       
