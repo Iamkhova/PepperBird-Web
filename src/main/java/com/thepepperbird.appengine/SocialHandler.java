@@ -124,7 +124,9 @@ public class SocialHandler
       blogID ="";
    }
    
-   
+  /*
+   * Reads blogger and stores into database to be uploaded to social sties
+   */ 
    private void blog2DB(String _label, String _url) throws IOException,GeneralSecurityException
    {
      int theCount;
@@ -133,48 +135,42 @@ public class SocialHandler
      PostList post = blog.getBlogPost(_label, _url);
      String labelValue, blogTitle, blogURL, blogLabels; 
      //Text blogContent;
-     
-     boolean triggerPost; // triggers match aginst key word
-     
-      DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
- 
-    // log.info("the count " + post.getItems());
-     for (Post p : post.getItems()) {
-     log.info("starting loop");
-    // log.info("is empty?" + post.getItems());
-       // labelValue = p.getLabels().toString();
-       labelValue ="";
-        triggerPost = labelValue.contains(_label);
         
-        if (triggerPost){
-         log.info("startting if");
+     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+ 
+     for (Post p : post.getItems()) {
+          log.info("starting loop");
+          labelValue ="";
           blogURL = p.getUrl().toString();
           blogTitle = p.getTitle().toString();
           Text blogContent = new Text(p.getContent());
           blogLabels ="";
-        //  blogLabels = p.getLabels().toString();
-         log.info("finish var store");
-          //Update new social content
-          Entity db = new Entity("socialContent", blogURL);
-          db.setProperty("syncedFacebook", "0");
-          db.setProperty("syncedTwitter", "0");
-          db.setProperty("syncedGoogle", "0");
-          db.setProperty("title", blogTitle);
-          db.setProperty("link", blogURL);
-          db.setProperty("description", blogContent);
-          db.setProperty("labels", blogLabels);
-          
-          datastore.put(db);
+       
+          if (socialLinkNew(blogURL)){
+              //Update new social content
+              Entity db = new Entity("socialContent", blogURL);
+              db.setProperty("syncedFacebook", "0");
+              db.setProperty("syncedTwitter", "0");
+              db.setProperty("syncedGoogle", "0");
+              db.setProperty("title", blogTitle);
+              db.setProperty("link", blogURL);
+              db.setProperty("description", blogContent);
+              db.setProperty("labels", blogLabels);
+              datastore.put(db);
  
           log.info("Social Feed Updated/Added");
-        }//end IF
+          }//end IF
+          
      }//end for loop
-     log.info("finished blog2db");
+     
+    log.info("finished blog2db");
    }
    
    private void blog2Twitter()throws IOException, TwitterException
    {
      TwitterHandler twitter = new TwitterHandler();
+     String shortTitle;
+     long titleLength;
      
       DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
      Filter unSyncFilter = new FilterPredicate("syncedTwitter", FilterOperator.EQUAL, "0");
@@ -208,7 +204,16 @@ public class SocialHandler
        
        String blogLabels = (String) result.getProperty("labels");
        log.info("label Sync Handled.");
-   
+       
+       //Shorten Long Titles
+       log.info("Title Length:" + blogTitle.length());
+       titleLength = blogTitle.length();
+       if (titleLength >= 80)
+       {
+         blogTitle = blogTitle.substring(0, Math.min(blogTitle.length(), 70));
+         blogTitle = blogTitle + "...";
+       }
+       
         
        // Post to Twitter
        twitter.post2Twitter(blogTitle,blogLink,"#LIBERIA #tpbird");
@@ -346,6 +351,36 @@ public class SocialHandler
      }// end For Loop        
      
    }
+   
+  
+   /*
+    * socialLinkNew Checks for duplicate links for blog post set to be socialized
+    */
+   private boolean socialLinkNew(String _blogUrl)
+   {
+     log.info("Starting social link check." + _blogUrl.toString());
+     DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
+     Filter unSyncFilter = new FilterPredicate("link", FilterOperator.EQUAL, _blogUrl);
+     boolean pass = false;
+     
+    // Use class Query to assemble a query
+     Query q = new Query("socialContent").setFilter(unSyncFilter);
+     log.info("Query Prepared.");
+     //PreparedQuery pq = datastore.prepare(q);
+     Entity entityStat = datastore.prepare(q).asSingleEntity();
+     if (entityStat == null) {
+           log.info("No Duplicate Entry Found");
+           pass = true;
+     }else
+     {
+           log.info("Duplicate Found:" + _blogUrl.toString());
+           pass = false;
+     }//end if
+     
+     log.info("Social Link Checking Finished.");
+     return pass;
+     
+  }
 
     private String getCharacterDataFromElement(Element e) { 
       try 
