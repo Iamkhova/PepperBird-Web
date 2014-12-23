@@ -10,6 +10,9 @@ import java.util.Iterator;
 
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.HttpURLConnection;
+import java.net.URL; 
 
 public class JSoupHandler
 {
@@ -22,18 +25,30 @@ public static final Logger log = Logger.getLogger(JSoupHandler.class.getName());
     */
    public String getContent(String _rss) throws IOException
    {
-   
-     log.info("Pulling Expanded Content.");
-     Document doc = Jsoup.connect(_rss).get();
-     
+     int rssResponseCode;
      String theValue = "";
      String linkTag= "";
+     
+     //Added code to verify Website exist.
+     rssResponseCode = getResponseCode(_rss);
+     log.info("RSS Response Code: " + rssResponseCode);
+     
+     if (rssResponseCode == 200)
+       {
 
-     // Pulls all the paragraphs from the content and put it in a string
-     // This area may need to get smarter based on the feed types.
-     Elements paragraphs = doc.select("p");
-     for(Element p : paragraphs)
-        theValue = theValue + p.text();
+           log.info("Pulling Expanded Content.");
+
+           Document doc = Jsoup.connect(_rss).get();
+
+           // Pulls all the paragraphs from the content and put it in a string
+           // This area may need to get smarter based on the feed types.
+           Elements paragraphs = doc.select("p");
+           for(Element p : paragraphs)
+              theValue = theValue + p.text();
+     }
+     else {
+       theValue = "Details currently does not exist.";
+     }
      
     //TODO Remove Footer Junk    
     //String tmpString = theValue.replace("Copyright ? 2013 United Nations Mission in Liberia. All rights reserved. Distributed by AllAfrica Global Media (allAfrica.com). To contact the copyright holder directly for corrections ? or for permission to republish or make other authorized use of this material, click here.AllAfrica aggregates and indexes content from over 130 African news organizations, plus more than 200 other sources, who are responsible for their own reporting and views. Articles and commentaries that identify allAfrica.com as the publisher are produced or commissioned by AllAfrica.AllAfrica is a voice of, by and about Africa - aggregating, producing and distributing 2000 news and information items daily from over 130 African news organizations and our own reporters to an African and global public. We operate from Cape Town, Dakar, Lagos, Monrovia, Nairobi and Washington DC.? 2013 AllAfrica // Privacy // Contact","");      
@@ -90,7 +105,15 @@ public static final Logger log = Logger.getLogger(JSoupHandler.class.getName());
     return buf.toString();
   }
   
- 
+   public static int getResponseCode(String urlString) throws MalformedURLException, IOException
+    {
+        URL u = new URL(urlString); 
+   	  HttpURLConnection huc =  (HttpURLConnection)  u.openConnection(); 
+   	  huc.setRequestMethod("GET"); 
+   	  huc.connect(); 
+     return huc.getResponseCode();
+	}
+  
  
 
 

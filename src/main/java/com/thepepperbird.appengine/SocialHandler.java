@@ -40,6 +40,7 @@ import twitter4j.TwitterException;
 
 
 
+
 public class SocialHandler
 {
    public static final Logger log = Logger.getLogger(SocialHandler.class.getName());
@@ -173,7 +174,10 @@ public class SocialHandler
      long titleLength;
      
       DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-     Filter unSyncFilter = new FilterPredicate("syncedTwitter", FilterOperator.EQUAL, "0");
+     Filter unSyncFilter =
+ new FilterPredicate("syncedTwitter",
+ FilterOperator.EQUAL,
+ "0");
      
       // Use class Query to assemble a query
      Query q = new Query("socialContent").setFilter(unSyncFilter);
@@ -248,16 +252,21 @@ public class SocialHandler
      log.info("Starting db2Blogger");
      // Read Datastore
      DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-     Filter unSyncFilter = new FilterPredicate("synced2blog", FilterOperator.EQUAL, "0");   
+     Filter unSyncFilter =
+ new FilterPredicate("synced2blog",
+ FilterOperator.EQUAL,
+ "0");   
      
      // Use class Query to assemble a query
      Query q = new Query("blogContent").setFilter(unSyncFilter);
     
      // Use PreparedQuery interface to retrieve results
      PreparedQuery pq = datastore.prepare(q);
-     log.info("Query Starting");
 
-     for (Entity result : pq.asIterable()) {
+     log.info("Query Starting");
+
+
+     for (Entity result : pq.asIterable()) {
        String rssTitle = (String) result.getProperty("title");
        String rssLink = (String) result.getProperty("link");
        String rssContent = "";
@@ -267,6 +276,8 @@ public class SocialHandler
        log.info("Title:" + rssTitle);
        log.info("Link:" + rssLink);
        log.info("Description" + rssContent);
+       
+       
         
        // Post tp Blogger
        
@@ -316,7 +327,10 @@ public class SocialHandler
         
         //Check if link already exist
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Filter rssCheck = new FilterPredicate("link",FilterOperator.EQUAL,rssLink);   
+        Filter rssCheck =
+ new FilterPredicate("link",
+FilterOperator.EQUAL,
+rssLink);   
      
         // Use class Query to assemble a query
         Query q = new Query("blogContent").setFilter(rssCheck);
@@ -347,7 +361,8 @@ public class SocialHandler
             log.info("Ending Datastore RSS2DB");
             
         }//end if
-
+
+
      }// end For Loop        
      
    }
@@ -358,7 +373,8 @@ public class SocialHandler
     */
    private boolean socialLinkNew(String _blogUrl)
    {
-     log.info("Starting social link check." + _blogUrl.toString());
+   
+  log.info("Starting social link check." + _blogUrl.toString());
      DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
      Filter unSyncFilter = new FilterPredicate("link", FilterOperator.EQUAL, _blogUrl);
      boolean pass = false;
@@ -389,7 +405,8 @@ public class SocialHandler
         if(child instanceof CharacterData) { 
             CharacterData cd = (CharacterData) child; 
             return cd.getData(); 
-        } // end if
+        } 
+// end if
         }catch(Exception ex) { 
       } 
       
@@ -406,6 +423,6 @@ public class SocialHandler
     private String getElementValue(Element parent,String label) { 
       return getCharacterDataFromElement((Element)parent.getElementsByTagName(label).item(0));
     } 
-    
+  
 
 }

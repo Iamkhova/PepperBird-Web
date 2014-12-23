@@ -27,13 +27,15 @@ import java.security.GeneralSecurityException;
 
 public class EngineParseFeed extends HttpServlet
 {
-public static final Logger log = Logger.getLogger(EngineParseFeed.class.getName());
+
+public static final Logger log = Logger.getLogger(EngineParseFeed.class.getName());
 
 
  private static final long serialVersionUID = 1L;
 
 
- public void doGet(HttpServletRequest req, HttpServletResponse resp)throws IOException
+ public void doGet(HttpServletRequest req, HttpServletResponse resp)
+throws IOException
   {
       resp.setContentType("text/plain");
       BlogHandler bhh = new BlogHandler();
@@ -51,7 +53,7 @@ public class EngineParseFeed extends HttpServlet
               social.post2Twitter();
               log.info("end posting to twitter");
             } catch (Exception e) {
-                log.info("failed" + e);
+                log.info("PostTwitter failed" + e);
               } finally {
           
               }
@@ -73,10 +75,12 @@ public class EngineParseFeed extends HttpServlet
           try {
                social.syncDB2Blogger(secure.getBlogID(secure.LIBERIA_NEWS_BLOG));
             } catch (Exception e) {
-                log.info("failed" + e);
-              } finally {
+                log.info("Sync2Blog failed " + value + e);
+              } 
+        
+        //finally {
           
-              }
+          //    }
        }//end if
   } 
 
