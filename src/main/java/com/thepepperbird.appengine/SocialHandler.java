@@ -280,9 +280,11 @@ public class SocialHandler
        
         
        // Post tp Blogger
-       
-       blog.postBlogByID(_blogID, rssTitle, rssContent, rssLink);
-       
+     //  try{
+       	blog.postBlogByID(_blogID, rssTitle, rssContent, rssLink);
+     //  }catch (Exception ex) {
+      //   log.info("Post to blogger triggered exception" + ex );
+     //  }
        //Update synced2blog flag
        Entity db = new Entity("blogContent", rssLink);
        db.setProperty("synced2blog", "1");

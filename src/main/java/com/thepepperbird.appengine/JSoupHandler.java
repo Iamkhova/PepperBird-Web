@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.HttpURLConnection;
 import java.net.URL; 
+import java.io.IOException;
 
 public class JSoupHandler
 {
@@ -28,41 +29,46 @@ public static final Logger log = Logger.getLogger(JSoupHandler.class.getName());
      int rssResponseCode;
      String theValue = "";
      String linkTag= "";
+     boolean urlPass = true;
+     Document doc;
      
      //Added code to verify Website exist.
      rssResponseCode = getResponseCode(_rss);
      log.info("RSS Response Code: " + rssResponseCode);
      
      if (rssResponseCode == 200)
-       {
+     {
+        log.info("Pulling Expanded Content.");
+        try
+        {
+           doc = Jsoup.connect(_rss).get();
+          
+          // Pulls all the paragraphs from the content and put it in a string
+          // This area may need to get smarter based on the feed types.
+          Elements paragraphs = doc.select("p");
+          for(Element p : paragraphs){
+              theValue = theValue + p.text();}
+       
+      	 //TODO Remove Footer Junk    
+          //String tmpString = theValue.replace("Copyright ? 2013 United Nations Mission in Liberia. All rights reserved. Distributed by AllAfrica Global Media (allAfrica.com). To contact the copyright holder directly for corrections ? or for permission to republish or make other authorized use of this material, click here.AllAfrica aggregates and indexes content from over 130 African news organizations, plus more than 200 other sources, who are responsible for their own reporting and views. Articles and commentaries that identify allAfrica.com as the publisher are produced or commissioned by AllAfrica.AllAfrica is a voice of, by and about Africa - aggregating, producing and distributing 2000 news and information items daily from over 130 African news organizations and our own reporters to an African and global public. We operate from Cape Town, Dakar, Lagos, Monrovia, Nairobi and Washington DC.? 2013 AllAfrica // Privacy // Contact","");      
 
-           log.info("Pulling Expanded Content.");
+          theValue = limit(theValue, 700);
+          log.info("Finished Pulling Expanded Content.");
 
-           Document doc = Jsoup.connect(_rss).get();
+          //TODO This is the link tag. Will need to eventually pull this from the DB.
+          linkTag="<br><br><a href=\"" + _rss + "\" target=\"_blank\">Read More</a>";
 
-           // Pulls all the paragraphs from the content and put it in a string
-           // This area may need to get smarter based on the feed types.
-           Elements paragraphs = doc.select("p");
-           for(Element p : paragraphs)
-              theValue = theValue + p.text();
+          //Merge Content
+          theValue = "<br>" + theValue + linkTag;
+          log.info("New Store" + theValue);
+          
+        } catch (Exception ex) {
+          log.info("Failure after response code validated");
+          theValue = "Details currently does not exist.";
+        }// end try
      }
-     else {
-       theValue = "Details currently does not exist.";
-     }
      
-    //TODO Remove Footer Junk    
-    //String tmpString = theValue.replace("Copyright ? 2013 United Nations Mission in Liberia. All rights reserved. Distributed by AllAfrica Global Media (allAfrica.com). To contact the copyright holder directly for corrections ? or for permission to republish or make other authorized use of this material, click here.AllAfrica aggregates and indexes content from over 130 African news organizations, plus more than 200 other sources, who are responsible for their own reporting and views. Articles and commentaries that identify allAfrica.com as the publisher are produced or commissioned by AllAfrica.AllAfrica is a voice of, by and about Africa - aggregating, producing and distributing 2000 news and information items daily from over 130 African news organizations and our own reporters to an African and global public. We operate from Cape Town, Dakar, Lagos, Monrovia, Nairobi and Washington DC.? 2013 AllAfrica // Privacy // Contact","");      
-        
-     theValue = limit(theValue, 700);
-     log.info("Finished Pulling Expanded Content.");
-     
-     //TODO This is the link tag. Will need to eventually pull this from the DB.
-     linkTag="<br><br><a href=\"" + _rss + "\" target=\"_blank\">Read More</a>";
-     
-     //Merge Content
-     theValue = "<br>" + theValue + linkTag;
-     log.info("New Store" + theValue);
-     
+
      return theValue;
    }
    
