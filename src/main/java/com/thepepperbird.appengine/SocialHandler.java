@@ -34,6 +34,7 @@ import com.google.api.services.blogger.model.Post;
 import com.google.api.services.blogger.model.PostList;
 
 import twitter4j.TwitterException;
+import java.util.Calendar;
 
 
 
@@ -134,7 +135,7 @@ public class SocialHandler
      log.info("Starting blog2DB");
      BlogHandler blog = new BlogHandler();
      PostList post = blog.getBlogPost(_label, _url);
-     String labelValue, blogTitle, blogURL, blogLabels; 
+     String labelValue, blogTitle, blogURL, blogLabels;
      //Text blogContent;
         
      DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -146,6 +147,7 @@ public class SocialHandler
           blogTitle = p.getTitle().toString();
           Text blogContent = new Text(p.getContent());
           blogLabels ="";
+
        
           if (socialLinkNew(blogURL)){
               //Update new social content
@@ -309,6 +311,7 @@ public class SocialHandler
    {
      JSONHandler js = new JSONHandler();
      JSONObject json = (JSONObject) js.readJsonFromUrl(_link);
+     Calendar calendar = Calendar.getInstance();
      
      //Breakdown JSON to the real meat
      json = (JSONObject) json.get("responseData");
@@ -326,6 +329,7 @@ public class SocialHandler
         String rssTitle = new String(objects.getString("title"));
         String rssLink = new String(objects.getString("link"));
         String rssContent = new String(objects.getString("content"));
+        String timeStamp = calendar.getTime().toString();
         
         //Check if link already exist
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -357,6 +361,7 @@ rssLink);
             db.setProperty("link", rssLink);
             db.setProperty("description", "");
             db.setProperty("synced2blog", "0");
+            db.setProperty("timeStamp", timeStamp);
         
             //DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
             datastore.put(db);
