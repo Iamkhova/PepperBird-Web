@@ -35,6 +35,7 @@ import com.google.api.services.blogger.model.PostList;
 
 import twitter4j.TwitterException;
 import java.util.Calendar;
+import java.util.Date;
 
 
 
@@ -92,7 +93,7 @@ public class SocialHandler
    {
      String key= _socialType; // set unique key
      
-     log.info ("Starting Datastore");
+     log.info ("Starting Datastore"); 
     
      Entity db = new Entity(key, key);
      db.setProperty("consumerKey", consumerKey);
@@ -136,6 +137,8 @@ public class SocialHandler
      BlogHandler blog = new BlogHandler();
      PostList post = blog.getBlogPost(_label, _url);
      String labelValue, blogTitle, blogURL, blogLabels;
+     String timeStamp;
+    
      //Text blogContent;
         
      DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
@@ -147,10 +150,14 @@ public class SocialHandler
           blogTitle = p.getTitle().toString();
           Text blogContent = new Text(p.getContent());
           blogLabels ="";
+          Calendar calendar = Calendar.getInstance();
+          int version = 2;
 
        
           if (socialLinkNew(blogURL)){
               //Update new social content
+              timeStamp = calendar.getTime().toString();
+            
               Entity db = new Entity("socialContent", blogURL);
               db.setProperty("syncedFacebook", "0");
               db.setProperty("syncedTwitter", "0");
@@ -159,9 +166,13 @@ public class SocialHandler
               db.setProperty("link", blogURL);
               db.setProperty("description", blogContent);
               db.setProperty("labels", blogLabels);
+              db.setProperty("timeStamp", timeStamp);
+              db.setProperty("version", version);
+            	
               datastore.put(db);
  
-          log.info("Social Feed Updated/Added");
+          log.info("Social Feed Updated/Added. Timestamp:" + timeStamp);
+           
           }//end IF
           
      }//end for loop
@@ -176,13 +187,11 @@ public class SocialHandler
      long titleLength;
      
       DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-     Filter unSyncFilter =
- new FilterPredicate("syncedTwitter",
- FilterOperator.EQUAL,
- "0");
+     Filter unSyncFilter =  new FilterPredicate("syncedTwitter", FilterOperator.EQUAL, "0");
+     Filter versionCheck =  new FilterPredicate("version", FilterOperator.EQUAL, "2");
      
       // Use class Query to assemble a query
-     Query q = new Query("socialContent").setFilter(unSyncFilter);
+     Query q = new Query("socialContent").setFilter(unSyncFilter).setFilter(versionCheck);
       PreparedQuery pq = datastore.prepare(q);
 
      log.info("Query Starting");
@@ -211,6 +220,10 @@ public class SocialHandler
        String blogLabels = (String) result.getProperty("labels");
        log.info("label Sync Handled.");
        
+       String version = (String) result.getProperty("version");
+       log.info("label Sync Handled.");
+       
+       
        //Shorten Long Titles
        log.info("Title Length:" + blogTitle.length());
        titleLength = blogTitle.length();
@@ -222,8 +235,8 @@ public class SocialHandler
        
         
        // Post to Twitter
-       twitter.post2Twitter(blogTitle,blogLink,"#LIBERIA #tpbird");
-       log.info("post2twitter eneaged.");
+      //TEST twitter.post2Twitter(blogTitle,blogLink,"#LIBERIA #tpbird");
+       log.info("post2twitter eneaged." + blogTitle + blogLink);
        
        //Update synced2blog flag
        Entity db = new Entity("socialContent", blogLink);
@@ -234,6 +247,7 @@ public class SocialHandler
        db.setProperty("link", blogLink);
        db.setProperty("description", blogDescription);
        db.setProperty("labels", blogLabels);
+       db.setProperty("version", version);
 
        datastore.put(db);
        
@@ -254,13 +268,11 @@ public class SocialHandler
      log.info("Starting db2Blogger");
      // Read Datastore
      DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-     Filter unSyncFilter =
- new FilterPredicate("synced2blog",
- FilterOperator.EQUAL,
- "0");   
+     Filter unSyncFilter = new FilterPredicate("synced2blog", FilterOperator.EQUAL,"0");   
+     Filter versionCheck = new FilterPredicate("version", FilterOperator.EQUAL,"2");   
      
      // Use class Query to assemble a query
-     Query q = new Query("blogContent").setFilter(unSyncFilter);
+     Query q = new Query("blogContent").setFilter(unSyncFilter).setFilter(versionCheck);
     
      // Use PreparedQuery interface to retrieve results
      PreparedQuery pq = datastore.prepare(q);
@@ -271,6 +283,9 @@ public class SocialHandler
      for (Entity result : pq.asIterable()) {
        String rssTitle = (String) result.getProperty("title");
        String rssLink = (String) result.getProperty("link");
+       String version = (String) result.getProperty("version");
+       Calendar recordStamp = (Calendar) result.getProperty("timeStamp");
+       
        String rssContent = "";
       // String rssContent = (String) result.getProperty("description");
        String syncState = (String) result.getProperty("synced2blog");
@@ -278,12 +293,12 @@ public class SocialHandler
        log.info("Title:" + rssTitle);
        log.info("Link:" + rssLink);
        log.info("Description" + rssContent);
-       
+       Calendar currentTime = Calendar.getInstance();
        
         
        // Post tp Blogger
      //  try{
-       	blog.postBlogByID(_blogID, rssTitle, rssContent, rssLink);
+     //TEST  	blog.postBlogByID(_blogID, rssTitle, rssContent, rssLink);
      //  }catch (Exception ex) {
       //   log.info("Post to blogger triggered exception" + ex );
      //  }
@@ -293,6 +308,7 @@ public class SocialHandler
        db.setProperty("title", rssTitle);
        db.setProperty("link", rssLink);
        db.setProperty("description", "");
+       db.setProperty("version", version);
 
        datastore.put(db);
        
@@ -312,6 +328,7 @@ public class SocialHandler
      JSONHandler js = new JSONHandler();
      JSONObject json = (JSONObject) js.readJsonFromUrl(_link);
      Calendar calendar = Calendar.getInstance();
+     int version = 2;
      
      //Breakdown JSON to the real meat
      json = (JSONObject) json.get("responseData");
@@ -333,10 +350,7 @@ public class SocialHandler
         
         //Check if link already exist
         DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Filter rssCheck =
- new FilterPredicate("link",
-FilterOperator.EQUAL,
-rssLink);   
+        Filter rssCheck = new FilterPredicate("link", FilterOperator.EQUAL, rssLink);   
      
         // Use class Query to assemble a query
         Query q = new Query("blogContent").setFilter(rssCheck);
@@ -362,10 +376,11 @@ rssLink);
             db.setProperty("description", "");
             db.setProperty("synced2blog", "0");
             db.setProperty("timeStamp", timeStamp);
+            db.setProperty("version", version);
         
             //DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
             datastore.put(db);
-            log.info("Ending Datastore RSS2DB");
+            log.info("Ending Datastore RSS2DB - TimeStamp" + timeStamp);
             
         }//end if
 
@@ -431,5 +446,7 @@ rssLink);
       return getCharacterDataFromElement((Element)parent.getElementsByTagName(label).item(0));
     } 
   
+ 
 
 }
+
