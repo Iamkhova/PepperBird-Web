@@ -65,7 +65,8 @@ public class CredentialHandler
     
      DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
      datastore.put(db);
-     log.info("Ending Datastore");    
+     log.info("Ending Datastore");
+    
    }
    
    public String getBlogID(String _blogKey)
@@ -90,7 +91,8 @@ public class CredentialHandler
        log.info("Secret Token Pulled");
      }// for Loop
      
-     return blogID; 
+     return blogID;
+ 
    }
    
    
@@ -167,7 +169,8 @@ public class CredentialHandler
        creds.clientID =(String) result.getProperty("clientID");
        creds.clientSecret = (String) result.getProperty("clientSecret");
        creds.refreshToken = (String) result.getProperty("refreshToken");
-       log.info("Secret Token Pulled");
+     
+  log.info("Secret Token Pulled");
     }// for Loop
      
      return creds;
