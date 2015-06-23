@@ -7,6 +7,9 @@ import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
 import com.googlecode.objectify.Key;
 
+import java.security.GeneralSecurityException;
+import java.io.IOException;
+
 class SocialSync {
     boolean isSynced;
     Date    dateSynced;
@@ -38,6 +41,24 @@ public class Article {
       this.date = date;
       this.id = link;
     }
+  
+  //
+  //TODO Set up Header
+  //
+  public void sync2Blogger(String _blogID) throws IOException, GeneralSecurityException {
+    BlogHandler blog = new BlogHandler();
+    
+    // Post tp Blogger
+     try{
+       	 	blog.postBlogByID(_blogID, this.title, this.description, this.link);
+         }catch (Exception ex) {
+            log.info("Post to blogger triggered exception" + ex );
+         }
+            
+    //Update synced2blog flag
+    this.onBlogger.isSynced = true;
+    this.onBlogger.dateSynced = date;
+  }
 
     //GETTERS AND SETTERS
 
