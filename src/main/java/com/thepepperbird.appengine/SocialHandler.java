@@ -260,7 +260,8 @@ public class SocialHandler {
       //       
         //  Article article = ofy().load().type(Article.class).filter("syncBlogger !=", true);
        OfyService.ofy();
-       Article article = ofy().load().type(Article.class).filter("syncBlogger !=", "true").first().now();
+       List<Article> article = ofy().load().type(Article.class).filter("syncBlogger !=", "true").list();
+    
 
     }
 
