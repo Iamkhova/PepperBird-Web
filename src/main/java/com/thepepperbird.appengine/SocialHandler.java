@@ -254,13 +254,16 @@ public class SocialHandler {
     /*
      * Reads for Google DB and post to Blogger
      */
-    private void db2Blogger(String _blogID)  {
+    private void db2Blogger(String _blogID) throws IOException {
       
       // Need to interate through article based on date and unsync status
       //       
         //  Article article = ofy().load().type(Article.class).filter("syncBlogger !=", true);
        OfyService.ofy();
        List<Article> article = ofy().load().type(Article.class).filter("syncBlogger !=", "true").list();
+       for (Article temp : article) {
+         try { 
+           temp.sync2Blogger(_blogID);} catch (Exception ex) {} }
     
 
     }

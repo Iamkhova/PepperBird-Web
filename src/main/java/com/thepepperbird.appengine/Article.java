@@ -28,10 +28,10 @@ public class Article {
     private String             title;
     private String             description;
     private Date               date;
-    SocialSync                 onBlogger;
-    SocialSync                 onFacebook;
-    SocialSync                 onGooglePlus;
-    SocialSync                 onTwitter;
+    private SocialSync                 onBlogger = new SocialSync();
+    private SocialSync                 onFacebook = new SocialSync();
+    private SocialSync                 onGooglePlus = new SocialSync();
+    private SocialSync                 onTwitter = new SocialSync();
 
     private Article() {
     };
