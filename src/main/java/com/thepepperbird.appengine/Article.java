@@ -46,6 +46,7 @@ public class Article {
   //TODO Set up Header
   //
   public void sync2Blogger(String _blogID) throws IOException, GeneralSecurityException {
+   If (this.onBlogger.isSynced == false) {
     BlogHandler blog = new BlogHandler();
     
     // Post tp Blogger
@@ -58,6 +59,7 @@ public class Article {
     //Update synced2blog flag
     this.onBlogger.isSynced = true;
     this.onBlogger.dateSynced = date;
+ }
   }
 
     //GETTERS AND SETTERS
