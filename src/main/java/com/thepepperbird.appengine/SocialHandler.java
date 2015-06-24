@@ -33,6 +33,13 @@ import java.security.GeneralSecurityException;
 import com.google.api.services.blogger.model.Post;
 import com.google.api.services.blogger.model.PostList;
 
+import com.googlecode.objectify.Result;
+
+import static com.googlecode.objectify.ObjectifyService.ofy;
+import com.googlecode.objectify.Objectify;
+import com.googlecode.objectify.ObjectifyService;
+
+
 import twitter4j.TwitterException;
 import java.util.Calendar;
 import java.util.Date;
@@ -247,60 +254,13 @@ public class SocialHandler {
     /*
      * Reads for Google DB and post to Blogger
      */
-    private void db2Blogger(String _blogID) throws IOException, GeneralSecurityException {
-        BlogHandler blog = new BlogHandler();
-
-        log.info("Starting db2Blogger");
-        // Read Datastore
-        DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-        Filter unSyncFilter = new FilterPredicate("synced2blog", FilterOperator.EQUAL, "0");
-        Filter versionCheck = new FilterPredicate("version", FilterOperator.EQUAL, "2");
-
-        // Use class Query to assemble a query
-        Query q = new Query("blogContent").setFilter(unSyncFilter).setFilter(versionCheck);
-
-        // Use PreparedQuery interface to retrieve results
-        PreparedQuery pq = datastore.prepare(q);
-
-        log.info("Query Starting");
-
-
-        for (Entity result : pq.asIterable()) {
-            String rssTitle = (String)result.getProperty("title");
-            String rssLink = (String)result.getProperty("link");
-            String version = (String)result.getProperty("version");
-            Calendar recordStamp = (Calendar)result.getProperty("timeStamp");
-
-            String rssContent = "";
-            // String rssContent = (String) result.getProperty("description");
-            String syncState = (String)result.getProperty("synced2blog");
-
-            log.info("Title:" + rssTitle);
-            log.info("Link:" + rssLink);
-            log.info("Description" + rssContent);
-            Calendar currentTime = Calendar.getInstance();
-
-
-            // Post tp Blogger
-            //  try{
-            //TEST  	blog.postBlogByID(_blogID, rssTitle, rssContent, rssLink);
-            //  }catch (Exception ex) {
-            //   log.info("Post to blogger triggered exception" + ex );
-            //  }
-            //Update synced2blog flag
-            Entity db = new Entity("blogContent", rssLink);
-            db.setProperty("synced2blog", "1");
-            db.setProperty("title", rssTitle);
-            db.setProperty("link", rssLink);
-            db.setProperty("description", "");
-            db.setProperty("version", version);
-
-            datastore.put(db);
-
-            log.info("Synced Flag Changed to SYNC");
-
-
-        }// for Loop
+    private void db2Blogger(String _blogID)  {
+      
+      // Need to interate through article based on date and unsync status
+      //       
+        //  Article article = ofy().load().type(Article.class).filter("syncBlogger !=", true);
+       OfyService.ofy();
+       Article article = ofy().load().type(Article.class).filter("syncBlogger !=", "true").first().now();
 
     }
 

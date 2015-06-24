@@ -21,8 +21,10 @@ public class Article {
 
     public static final Logger log = Logger.getLogger(Article.class.getName());
 
-    @Id String                       id;
-    @Index private String             link;
+    @Id
+    String                     id;
+    @Index
+    private String             link;
     private String             title;
     private String             description;
     private Date               date;
@@ -38,29 +40,38 @@ public class Article {
         this.link = link;
         this.title = title;
         this.description = description;
-      this.date = date;
-      this.id = link;
+        this.date = date;
+        this.id = link;
+        this.onBlogger.isSynced = false;
+        this.onBlogger.dateSynced = date;
+        this.onFacebook.isSynced = false;
+        this.onFacebook.dateSynced = date;
+        this.onGooglePlus.isSynced = false;
+        this.onGooglePlus.dateSynced = date;
+        this.onTwitter.isSynced = false;
+        this.onTwitter.dateSynced = date;
+       
     }
-  
-  //
-  //TODO Set up Header
-  //
-  public void sync2Blogger(String _blogID) throws IOException, GeneralSecurityException {
-   If (this.onBlogger.isSynced == false) {
-    BlogHandler blog = new BlogHandler();
-    
-    // Post tp Blogger
-     try{
-       	 	blog.postBlogByID(_blogID, this.title, this.description, this.link);
-         }catch (Exception ex) {
-            log.info("Post to blogger triggered exception" + ex );
-         }
-            
-    //Update synced2blog flag
-    this.onBlogger.isSynced = true;
-    this.onBlogger.dateSynced = date;
- }
-  }
+
+    //
+    //TODO Set up Header
+    //
+    public void sync2Blogger(String _blogID) throws IOException, GeneralSecurityException {
+        if (this.onBlogger.isSynced == false) {
+            BlogHandler blog = new BlogHandler();
+
+            // Post tp Blogger
+            try {
+                blog.postBlogByID(_blogID, this.title, this.description, this.link);
+            } catch (Exception ex) {
+                log.info("Post to blogger triggered exception" + ex);
+            }
+
+            //Update synced2blog flag
+            this.onBlogger.isSynced = true;
+            this.onBlogger.dateSynced = date;
+        }else{ log.info("Post has already synced with blogger.");}
+    }
 
     //GETTERS AND SETTERS
 
