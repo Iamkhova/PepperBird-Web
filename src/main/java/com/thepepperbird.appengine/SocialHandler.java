@@ -260,11 +260,18 @@ public class SocialHandler {
       //       
         //  Article article = ofy().load().type(Article.class).filter("syncBlogger !=", true);
        OfyService.ofy();
-       List<Article> article = ofy().load().type(Article.class).filter("syncBlogger !=", "true").list();
+       List<Article> article = ofy().load().type(Article.class).filter("onBlogger.isSynced =", false).list();
        for (Article temp : article) {
+       // iterate via "for loop"
+	
          try { 
-           temp.sync2Blogger(_blogID);} catch (Exception ex) {} }
-    
+         //temp.sync2Blogger(_blogID);
+          String temp1 = temp.getTitle();
+          log.info("loop ran for article: " + temp1);
+         ofy().save().entity(temp).now(); // async without the now()
+         } catch (Exception ex) {} }
+           
+    log.info("Finish running.");
 
     }
 

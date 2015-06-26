@@ -5,14 +5,16 @@ import java.util.Date;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
+import com.googlecode.objectify.annotation.Unindex;
 import com.googlecode.objectify.Key;
 
 import java.security.GeneralSecurityException;
 import java.io.IOException;
 
+@Index
 class SocialSync {
-    boolean isSynced;
-    Date    dateSynced;
+    @Index boolean isSynced;
+    @Index Date    dateSynced;
 
 }
 

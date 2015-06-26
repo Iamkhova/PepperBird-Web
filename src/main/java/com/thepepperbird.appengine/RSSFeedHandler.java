@@ -70,7 +70,8 @@ public class RSSFeedHandler {
         this.objects = this.entries.getJSONObject(number);
         String rssTitle = new String(this.objects.getString("title"));
         String rssLink = new String(this.objects.getString("link"));
-        String rssContent = new String(this.objects.getString("content"));
+        String rssContent = new String(this.objects.getString("contentSnippet"));
+      //  if (rssContent == "") { rssContent = String(this.objects.getString("contentSnippet"));}
 
         if (!linkFound(rssLink)) {
             log.info("Virgin Query Found!..processing");
