@@ -14,6 +14,8 @@ import org.json.JSONObject;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+//import java.security.GeneralSecurityException;
+
 
 public class RSSFeedHandler {
 
@@ -44,7 +46,8 @@ public class RSSFeedHandler {
         this.date = new Date();
 
 
-        parseJSON();
+  parseJSON();
+      
         log.info("Feed Parsed. Entries Found:" + this.entries.length());
     }
 
@@ -67,18 +70,34 @@ public class RSSFeedHandler {
 
     private void loadEntry(int number) {
 
+      JSoupHandler parser = new JSoupHandler();
+      UtilityHandler utility = new UtilityHandler();
+        String rssContent = "";
+      
         this.objects = this.entries.getJSONObject(number);
         String rssTitle = new String(this.objects.getString("title"));
         String rssLink = new String(this.objects.getString("link"));
-        String rssContent = new String(this.objects.getString("contentSnippet"));
-      //  if (rssContent == "") { rssContent = String(this.objects.getString("contentSnippet"));}
-
+        String rssDescription = new String(this.objects.getString("contentSnippet"));
+        
+        rssLink = utility.cleanRSSLink(rssLink);
+         
         if (!linkFound(rssLink)) {
             log.info("Virgin Query Found!..processing");
+          
+            // Handel getting content
+    
+          try{
+ 					rssContent = parser.getContent(rssLink);
+				}catch(IOException e){}
+        //    } catch (Exception ex) {log.info("Post to blogger triggered exception" + ex);
+       //     }
+      
+            if (rssContent == "") {rssContent = rssDescription;}
 
-
-            Article newLink = new Article(rssLink, rssTitle, rssContent, this.date);
-            log.info("Preparing to load: " + rssTitle + " " + rssLink + " " + rssContent);
+            
+            log.info("Cleaned Link" + rssLink);
+            Article newLink = new Article(rssLink, rssTitle, rssDescription, rssContent, this.date);
+            log.info("Preparing to load: " + rssTitle + " " + rssLink + " " + rssDescription);
 
             ofy().save().entity(newLink).now(); // async without the now()
 

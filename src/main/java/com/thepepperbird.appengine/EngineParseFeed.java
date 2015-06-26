@@ -64,8 +64,8 @@ throws IOException
           //Parse Feeds - Convert RSS to JSON and stored in Datastore
           //Only pulling true news feeds
           social.rssParse2DB("http://ajax.googleapis.com/ajax/services/feed/load?v=1.0&num=10&q=http://www.google.com/alerts/feeds/14472321683254243665/10900860890542401257");
-          //social.rssParse2DB("http://ajax.googleapis.com/ajax/services/feed/load?v=1.0&num=10&q=http://allafrica.com/tools/headlines/rdf/liberia/headlines.rdf");
-          //social.rssParse2DB("http://ajax.googleapis.com/ajax/services/feed/load?v=1.0&num=10&q=http://www.google.com/alerts/feeds/14472321683254243665/4209907976913027929"); 
+          social.rssParse2DB("http://ajax.googleapis.com/ajax/services/feed/load?v=1.0&num=10&q=http://allafrica.com/tools/headlines/rdf/liberia/headlines.rdf");
+          social.rssParse2DB("http://ajax.googleapis.com/ajax/services/feed/load?v=1.0&num=10&q=http://www.google.com/alerts/feeds/14472321683254243665/4209907976913027929"); 
           
       }//end if
       

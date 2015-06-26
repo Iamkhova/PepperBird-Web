@@ -30,6 +30,7 @@ public class Article {
     private String             title;
     private String             description;
     private Date               date;
+    private String             content;
     private SocialSync                 onBlogger = new SocialSync();
     private SocialSync                 onFacebook = new SocialSync();
     private SocialSync                 onGooglePlus = new SocialSync();
@@ -38,7 +39,7 @@ public class Article {
     private Article() {
     };
 
-    public Article(String link, String title, String description, Date date) {
+    public Article(String link, String title, String description, String content, Date date) {
         this.link = link;
         this.title = title;
         this.description = description;
@@ -52,6 +53,7 @@ public class Article {
         this.onGooglePlus.dateSynced = date;
         this.onTwitter.isSynced = false;
         this.onTwitter.dateSynced = date;
+        this.content = content;
        
     }
 
@@ -61,10 +63,11 @@ public class Article {
     public void sync2Blogger(String _blogID) throws IOException, GeneralSecurityException {
         if (this.onBlogger.isSynced == false) {
             BlogHandler blog = new BlogHandler();
+          
 
             // Post tp Blogger
             try {
-                blog.postBlogByID(_blogID, this.title, this.description, this.link);
+                blog.postBlogByID(_blogID, this.title, this.content, this.link);
             } catch (Exception ex) {
                 log.info("Post to blogger triggered exception" + ex);
             }

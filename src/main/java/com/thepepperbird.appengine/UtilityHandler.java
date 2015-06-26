@@ -34,10 +34,23 @@ public class UtilityHandler {
        
      }
     
-    
-     
-    
+        
     
     
+    }
+  
+    public String cleanRSSLink (String _rssLink)
+    {
+      String tmpString = _rssLink;
+      String tmpValue;
+      
+      
+      // Check url=
+      tmpValue = "url=";
+      if( tmpString.toLowerCase().contains(tmpValue.toLowerCase()) == true)
+         {
+           tmpString = tmpString.substring(tmpString.indexOf("url=")+4);}
+         
+      return tmpString;
     }
 }

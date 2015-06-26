@@ -32,9 +32,6 @@ public static final Logger log = Logger.getLogger(JSoupHandler.class.getName());
      boolean urlPass = true;
      Document doc;
      
-     //Added code to verify Website exist.
-     _rss = _rss.replace("https://www.google.com/url?rct=j&sa=t&url=", ""); // clean string
-     log.info("Scrubbed link:" + _rss);
      rssResponseCode = getResponseCode(_rss);
      log.info("RSS Response Code: " + rssResponseCode);
      
@@ -45,12 +42,18 @@ public static final Logger log = Logger.getLogger(JSoupHandler.class.getName());
         {
           log.info ("Check RSS Link");
            doc = Jsoup.connect(_rss).get();
+      
+          // Clean up Feed
+          doc.getElementsByClass("headline").remove(); //handles allafrica
+          
           log.info ("RSS link reterived");
           // Pulls all the paragraphs from the content and put it in a string
           // This area may need to get smarter based on the feed types.
          
         // Elements paragraphs = doc.select("p");
          Elements paragraphs = doc.getElementsByTag("p");
+   
+          
           log.info ("pargraph links reatreived");
           
           for(Element p : paragraphs){    

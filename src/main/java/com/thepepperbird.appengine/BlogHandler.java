@@ -95,7 +95,7 @@ public class BlogHandler
     * Post to Blogger
     * This pulls the full content from rss link and appends it to the blogger.
     */
-   public void postBlogByID (String _blogID, String _blogTitle, String _blogShortContent, String _blogRSS) throws IOException,GeneralSecurityException {
+   public void postBlogByID (String _blogID, String _blogTitle, String _blogContent, String _blogRSS) throws IOException,GeneralSecurityException {
     
       String expandedContent = ""; // This holds the expanded content that we... take from the page
       JSoupHandler parser = new JSoupHandler();
@@ -107,17 +107,17 @@ public class BlogHandler
       // _blogRSS = parser.formatRSS(_blogRSS);
              
       //Get full content
-      expandedContent = parser.getContent(_blogRSS);
-      if (expandedContent == "") {expandedContent = _blogShortContent;}
+      //expandedContent = parser.getContent(_blogRSS);
+     // if (expandedContent == "") {expandedContent = _blogShortContent;}
      
-     log.info ("Expanded Content" + expandedContent);
-     log.info ("Content" + _blogShortContent);
+     //log.info ("Expanded Content" + expandedContent);
+    // log.info ("Content" + _blogShortContent);
       
       //Prepare post to Blogger
       Post content = new Post();
 
       content.setTitle(_blogTitle);
-      content.setContent(expandedContent);
+      content.setContent(_blogContent);
      
       Insert postsInsertAction = blogger.posts().insert(_blogID, content);
      
