@@ -33,6 +33,8 @@ public static final Logger log = Logger.getLogger(JSoupHandler.class.getName());
      Document doc;
      
      //Added code to verify Website exist.
+     _rss = _rss.replace("https://www.google.com/url?rct=j&sa=t&url=", ""); // clean string
+     log.info("Scrubbed link:" + _rss);
      rssResponseCode = getResponseCode(_rss);
      log.info("RSS Response Code: " + rssResponseCode);
      
@@ -41,17 +43,24 @@ public static final Logger log = Logger.getLogger(JSoupHandler.class.getName());
         log.info("Pulling Expanded Content.");
         try
         {
+          log.info ("Check RSS Link");
            doc = Jsoup.connect(_rss).get();
-          
+          log.info ("RSS link reterived");
           // Pulls all the paragraphs from the content and put it in a string
           // This area may need to get smarter based on the feed types.
-          Elements paragraphs = doc.select("p");
-          for(Element p : paragraphs){
-              theValue = theValue + p.text();}
+         
+        // Elements paragraphs = doc.select("p");
+         Elements paragraphs = doc.getElementsByTag("p");
+          log.info ("pargraph links reatreived");
+          
+          for(Element p : paragraphs){    
+            String tmpValue = p.text();
+            if (tmpValue.length() > 20) {
+              theValue = theValue + "<br>" + tmpValue;}}
        
       	 //TODO Remove Footer Junk    
           //String tmpString = theValue.replace("Copyright ? 2013 United Nations Mission in Liberia. All rights reserved. Distributed by AllAfrica Global Media (allAfrica.com). To contact the copyright holder directly for corrections ? or for permission to republish or make other authorized use of this material, click here.AllAfrica aggregates and indexes content from over 130 African news organizations, plus more than 200 other sources, who are responsible for their own reporting and views. Articles and commentaries that identify allAfrica.com as the publisher are produced or commissioned by AllAfrica.AllAfrica is a voice of, by and about Africa - aggregating, producing and distributing 2000 news and information items daily from over 130 African news organizations and our own reporters to an African and global public. We operate from Cape Town, Dakar, Lagos, Monrovia, Nairobi and Washington DC.? 2013 AllAfrica // Privacy // Contact","");      
-
+ 			log.info("Expanded Text:" + theValue);
           theValue = limit(theValue, 700);
           log.info("Finished Pulling Expanded Content.");
 

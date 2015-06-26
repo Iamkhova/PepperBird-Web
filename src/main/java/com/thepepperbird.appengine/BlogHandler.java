@@ -108,7 +108,10 @@ public class BlogHandler
              
       //Get full content
       expandedContent = parser.getContent(_blogRSS);
-     // if (expandedContent == "") {expandedContent = _blogShortContent;}
+      if (expandedContent == "") {expandedContent = _blogShortContent;}
+     
+     log.info ("Expanded Content" + expandedContent);
+     log.info ("Content" + _blogShortContent);
       
       //Prepare post to Blogger
       Post content = new Post();
@@ -123,7 +126,7 @@ public class BlogHandler
       
       // Disable/Enable Draft Mode
       //TODO This needs to be built as a option and not hardcoded 
-      postsInsertAction.setIsDraft(false);
+      postsInsertAction.setIsDraft(true);
 
      // This step sends the request to the server.
      Post post = postsInsertAction.setBlogId(_blogID).execute();

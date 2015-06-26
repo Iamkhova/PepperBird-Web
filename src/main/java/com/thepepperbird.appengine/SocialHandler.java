@@ -265,7 +265,7 @@ public class SocialHandler {
        // iterate via "for loop"
 	
          try { 
-         //temp.sync2Blogger(_blogID);
+         temp.sync2Blogger(_blogID);
           String temp1 = temp.getTitle();
           log.info("loop ran for article: " + temp1);
          ofy().save().entity(temp).now(); // async without the now()
