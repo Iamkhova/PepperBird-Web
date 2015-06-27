@@ -8,12 +8,12 @@ import com.googlecode.objectify.Objectify;
 import com.googlecode.objectify.ObjectifyService;
 
 import java.util.logging.Logger;
-import java.util.Date;
+//import java.util.Date;
 import java.io.IOException;
 import org.json.JSONObject;
 import org.json.JSONArray;
 import org.json.JSONException;
-
+import org.joda.time.*;
 //import java.security.GeneralSecurityException;
 
 
@@ -25,7 +25,7 @@ public class RSSFeedHandler {
     private JSONObject         json;
     private JSONArray          entries;
     private JSONObject         objects;
-    private Date               date;
+    private LocalDate               date;
 
 
     private RSSFeedHandler() {
@@ -43,7 +43,7 @@ public class RSSFeedHandler {
         this.feedUrl = feedUrl;
         this.js = new JSONHandler();
         this.json = (JSONObject)js.readJsonFromUrl(this.feedUrl);
-        this.date = new Date();
+        this.date = new LocalDate();
 
 
   parseJSON();

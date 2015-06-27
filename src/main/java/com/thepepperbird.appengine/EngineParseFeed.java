@@ -47,6 +47,7 @@ throws IOException
       
       if ("postTwitter".equals(value))
       {
+        /*
          try {
               social.syncSocialDB("","http://liberianews.thepepperbird.com/");
               log.info("starting posting to twitter");
@@ -57,6 +58,7 @@ throws IOException
               } finally {
           
               }
+              */
       }
       
       if ("syncRSS".equals(value))

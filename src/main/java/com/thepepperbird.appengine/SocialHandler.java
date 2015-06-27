@@ -41,8 +41,9 @@ import com.googlecode.objectify.ObjectifyService;
 
 
 import twitter4j.TwitterException;
-import java.util.Calendar;
-import java.util.Date;
+//import java.util.Calendar;
+//import java.util.Date;
+import org.joda.time.*;
 
 
 public class SocialHandler {
@@ -70,9 +71,9 @@ public class SocialHandler {
         db2Blogger(_blogID);
     }
 
-    public void syncSocialDB(String _label, String _url) throws IOException, GeneralSecurityException {
-        blog2DB(_label, _url);
-    }
+   // public void syncSocialDB(String _label, String _url) throws IOException, GeneralSecurityException {
+   //     blog2DB(_label, _url);
+  //  }
 
     public void post2Twitter() throws IOException, TwitterException {
         blog2Twitter();
@@ -126,6 +127,7 @@ public class SocialHandler {
     /*
      * Reads blogger and stores into database to be uploaded to social sties
      */
+  /*
     private void blog2DB(String _label, String _url) throws IOException, GeneralSecurityException {
         int theCount;
         log.info("Starting blog2DB");
@@ -174,6 +176,8 @@ public class SocialHandler {
 
         log.info("finished blog2db");
     }
+    */
+  // The above code is not needed anymore
 
     private void blog2Twitter() throws IOException, TwitterException {
         TwitterHandler twitter = new TwitterHandler();
@@ -263,13 +267,18 @@ public class SocialHandler {
        List<Article> article = ofy().load().type(Article.class).filter("onBlogger.isSynced =", false).list();
        for (Article temp : article) {
        // iterate via "for loop"
-	
+	//todo date check
+	if (!isArticleAged(temp.getArticleDate()))
+     {
          try { 
          temp.sync2Blogger(_blogID);
           String temp1 = temp.getTitle();
           log.info("loop ran for article: " + temp1);
          ofy().save().entity(temp).now(); // async without the now()
-         } catch (Exception ex) {} }
+         } catch (Exception ex) {}
+       }
+   }       
+       
            
     log.info("Finish running.");
 
@@ -344,5 +353,20 @@ public class SocialHandler {
         return getCharacterDataFromElement((Element)parent.getElementsByTagName(label).item(0));
     }
 
+   private boolean isArticleAged(LocalDate _articleDate)
+     {
+        boolean state = false;
+      LocalDate currentDate = new LocalDate();
+     
+      Days d = Days.daysBetween(_articleDate, currentDate);
+      int days = d.getDays();
+     
+     if (days > 3) {state = true;}
+     
+     log.info("Article Age Checked");
+     
+     return state;
+     
+   }
 
 }

@@ -1,7 +1,8 @@
 package com.thepepperbird.appengine;
 
 import java.util.logging.Logger;
-import java.util.Date;
+//import java.util.Date;
+import org.joda.time.*;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Index;
@@ -14,7 +15,7 @@ import java.io.IOException;
 @Index
 class SocialSync {
     @Index boolean isSynced;
-    @Index Date    dateSynced;
+    @Index LocalDate    dateSynced;
 
 }
 
@@ -29,7 +30,7 @@ public class Article {
     private String             link;
     private String             title;
     private String             description;
-    private Date               date;
+    private LocalDate              date;
     private String             content;
     private SocialSync                 onBlogger = new SocialSync();
     private SocialSync                 onFacebook = new SocialSync();
@@ -39,7 +40,7 @@ public class Article {
     private Article() {
     };
 
-    public Article(String link, String title, String description, String content, Date date) {
+    public Article(String link, String title, String description, String content, LocalDate date) {
         this.link = link;
         this.title = title;
         this.description = description;
@@ -103,4 +104,8 @@ public class Article {
     public String getDescription() {
         return this.description;
     }
+  
+   public LocalDate getArticleDate() {
+     return this.date;
+   }
 }
